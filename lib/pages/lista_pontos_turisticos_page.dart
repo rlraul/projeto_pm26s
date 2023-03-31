@@ -54,7 +54,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
         final pontoTuristico = pontosTuristicos[index];
         return PopupMenuButton(
           child: ListTile(
-            title: Text('${pontoTuristico.id} - ${pontoTuristico.nome}'),
+            title: Text('${pontoTuristico.id} - ${pontoTuristico.nome} - ${pontoTuristico.descricao} - ${pontoTuristico.retornarDataInclusaoFormatada}'),
           ),
           itemBuilder: (BuildContext context) => criarItensMenuPopup(),
           onSelected: (String valorSelecionado) {
@@ -159,6 +159,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
                     } else {
                       pontosTuristicos[indice] = novoPontoTuristico;
                     }
+                    novoPontoTuristico.data_inclusao = DateTime.now();
                     pontosTuristicos.add(novoPontoTuristico);
                   });
                   Navigator.of(context).pop();

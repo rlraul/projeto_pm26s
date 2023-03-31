@@ -45,7 +45,17 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
               }
               return null;
             },
-          )
+          ),
+          TextFormField(
+            controller: this.descricaoController,
+            decoration: InputDecoration(labelText: 'Descrição do ponto turístico'),
+            validator: (String? descricao) {
+              if (descricao == null || descricao.isEmpty) {
+                return 'Campo "Descrição" obrigatório';
+              }
+              return null;
+            },
+          ),
         ],
       ),
     );
