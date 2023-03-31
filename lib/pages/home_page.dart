@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
                 //Abrirá a ListaPontosTuristicos
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ListaPontosTuristicos()));
+                    MaterialPageRoute(builder: (context) => ListaPontosTuristicos()));
               },
             )
           ],

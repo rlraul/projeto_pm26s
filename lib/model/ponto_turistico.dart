@@ -13,7 +13,7 @@ class PontoTutistico {
   int id;
   String nome;
   String descricao;
-  DateTime data_inclusao;
+  DateTime? data_inclusao;
 
   PontoTutistico({
       required this.id,
