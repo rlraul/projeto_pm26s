@@ -44,30 +44,46 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
   }
 
   Widget _criarBody() {
-    if (pontosTuristicos.isEmpty) {
+    if (pontosTuristicos.isEmpty || pontosTuristicos == null) {
       return const Center(
         child: Text('Nenhum ponto turístico cadastrado!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       );
     }
     return ListView.separated(
-      itemBuilder: (BuildContext context, int index) {
-        final pontoTuristico = pontosTuristicos[index];
-        return PopupMenuButton(
-          child: ListTile(
-            title: Text('${pontoTuristico.id} - ${pontoTuristico.nome} - ${pontoTuristico.descricao} - ${pontoTuristico.retornarDataInclusaoFormatada}'),
-          ),
-          itemBuilder: (BuildContext context) => criarItensMenuPopup(),
-          onSelected: (String valorSelecionado) {
-            if (valorSelecionado == ACAO_EDITAR){
-              _abrirForm(pontoTutisticoAtual: pontoTuristico, indice: index);
-            }else{
-              _excluir(index);
-            }
-          },
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => Divider(),
-      itemCount: pontosTuristicos.length
+        itemBuilder: (BuildContext context, int index) {
+          final pontoTuristico = pontosTuristicos[index];
+          return Card(
+            child: Column (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                ListTile(
+                  leading: Icon(Icons.album),
+                  title: Text(pontoTuristico.nome),
+                  subtitle: Text(pontoTuristico.descricao),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    TextButton(
+                        onPressed: () {
+                          _abrirForm(pontoTutisticoAtual: pontoTuristico, indice: index);
+                        },
+                        child: Text('Editar')
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          _excluir(index);
+                        },
+                        child: Text('Excluir')
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) => Divider(),
+        itemCount: pontosTuristicos.length
     );
   }
 
