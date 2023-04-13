@@ -15,6 +15,8 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
 
   final formKey = GlobalKey<FormState>();
   final nomeController = TextEditingController();
+  final cidadeController = TextEditingController();
+  final paisController = TextEditingController();
   final descricaoController = TextEditingController();
   final dtInclusaoController = TextEditingController();
   final _dateFormat = DateFormat('dd/MM/yyy');
@@ -24,6 +26,8 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
     super.initState();
     if ( widget.pontoTuristicoAtual != null){
       nomeController.text = widget.pontoTuristicoAtual!.nome;
+      cidadeController.text = widget.pontoTuristicoAtual!.cidade;
+      paisController.text = widget.pontoTuristicoAtual!.pais;
       descricaoController.text = widget.pontoTuristicoAtual!.descricao;
       dtInclusaoController.text = widget.pontoTuristicoAtual!.retornarDataInclusaoFormatada;
     }
@@ -56,6 +60,26 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
               return null;
             },
           ),
+          TextFormField(
+            controller: this.cidadeController,
+            decoration: InputDecoration(labelText: 'Cidade do ponto turístico'),
+            validator: (String? cidade) {
+              if (cidade == null || cidade.isEmpty) {
+                return 'Campo "Cidade" obrigatório';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: this.paisController,
+            decoration: InputDecoration(labelText: 'País do ponto turístico'),
+            validator: (String? pais) {
+              if (pais == null || pais.isEmpty) {
+                return 'Campo "País" obrigatório';
+              }
+              return null;
+            },
+          ),
         ],
       ),
     );
@@ -66,6 +90,8 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   PontoTutistico get novoPontoTuristico => PontoTutistico(
     id: widget.pontoTuristicoAtual?.id ?? 0,
     nome: nomeController.text,
+    cidade: cidadeController.text,
+    pais: paisController.text,
     descricao: descricaoController.text,
     data_inclusao: dtInclusaoController.text.isEmpty ? null : _dateFormat.parse(dtInclusaoController.text),
   );
