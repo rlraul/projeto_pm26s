@@ -87,7 +87,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
                     ),
                     TextButton(
                         onPressed: () {
-                          _excluir(index);
+                          _excluir(pontoTuristico);
                         },
                         child: Text('Excluir')
                     ),
@@ -102,39 +102,44 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
     );
   }
 
-  void _excluir(int indice){
+  void _excluir(PontoTutistico pontoTutistico){
     showDialog(
-      context: context,
-      builder: (BuildContext context){
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.warning, color: Colors.red,),
-              Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text('ATENÇÃO'),
-              ),
-            ],
-          ),
-          content: Text('Esse registro será deletado definitivamente'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar')
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.warning, color: Colors.red,),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text('ATENÇÃO'),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _pontosTuristicos.removeAt(indice);
-                });
-              },
-              child: Text('OK')
-            )
-          ],
-        );
-      }
+            content: Text('Esse registro será deletado definitivamente'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Cancelar')
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if(pontoTutistico.id == null){
+                      return;
+                    }
+                    _dao.remover(pontoTutistico.id!).then((sucess) {
+                      if (sucess)
+                        _atualizarLista();
+                    });
+                  },
+                  child: Text('OK')
+              )
+            ],
+          );
+        }
     );
+
   }
 
   void _abrirForm({PontoTutistico? pontoTutistico}) {
@@ -188,16 +193,18 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
     final usarOrdemDecrescente =
         prefs.getBool(FiltroPontosTuristicosPage.chaveUsarOrdemDecrescente) == true;
     final filtroDescricao =
-        prefs.getString(FiltroPontosTuristicosPage.chaveFiltroCampo) ?? '';
-    final tarefas = await _dao.listar(
+        prefs.getString(FiltroPontosTuristicosPage.chaveFiltroDescricao) ?? '';
+
+    final pontosTuristicos = await _dao.listar(
       filtro: filtroDescricao,
       campoOrdenacao: campoOrdenacao,
       usarOrdemDecrescente: usarOrdemDecrescente,
     );
+
     setState(() {
       _pontosTuristicos.clear();
-      if (tarefas.isNotEmpty) {
-        _pontosTuristicos.addAll(tarefas);
+      if (pontosTuristicos.isNotEmpty) {
+        _pontosTuristicos.addAll(pontosTuristicos);
       }
     });
     setState(() {
