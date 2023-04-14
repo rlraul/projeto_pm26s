@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class PontoTutistico {
 
-  static const NOME_TABELA = 'tarefa';
+  static const NOME_TABELA = 'pontoTuristico';
   static const CAMPO_ID = 'id';
   static const CAMPO_NOME = 'nome';
   static const CAMPO_PAIS = 'pais';
@@ -11,7 +11,7 @@ class PontoTutistico {
   static const CAMPO_DESCRICAO = 'descricao';
   static const CAMPO_DATA_INC = 'data';
 
-  int id;
+  int? id;
   String nome;
   String descricao;
   String cidade;
@@ -28,18 +28,16 @@ class PontoTutistico {
   });
 
   String get retornarDataInclusaoFormatada {
-    if (this.data_inclusao == null) {
-      return "";
-    }
+    this.data_inclusao = DateTime.now();
     return DateFormat('dd/MM/yyyy').format(this.data_inclusao!);
   }
 
   Map<String, dynamic> toMap() => {
     CAMPO_ID: id,
     CAMPO_NOME: nome,
+    CAMPO_DESCRICAO: descricao,
     CAMPO_CIDADE: cidade,
     CAMPO_PAIS: pais,
-    CAMPO_DESCRICAO: descricao,
     CAMPO_DATA_INC:
     data_inclusao == null ? null : DateFormat("yyyy-MM-dd").format(data_inclusao!),
   };

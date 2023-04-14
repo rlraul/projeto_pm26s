@@ -34,6 +34,7 @@ class Provider {
             ${PontoTutistico.CAMPO_DESCRICAO} TEXT,
             ${PontoTutistico.CAMPO_CIDADE} TEXT NOT NULL,
             ${PontoTutistico.CAMPO_PAIS} TEXT NOT NULL,
+            ${PontoTutistico.CAMPO_DATA_INC} TEXT NOT NULL
           );  
         '''
     );

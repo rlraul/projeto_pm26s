@@ -88,7 +88,7 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   bool dadosValidados() => formKey.currentState!.validate() == true;
 
   PontoTutistico get novoPontoTuristico => PontoTutistico(
-    id: widget.pontoTuristicoAtual?.id ?? 0,
+    id: widget.pontoTuristicoAtual?.id,
     nome: nomeController.text,
     cidade: cidadeController.text,
     pais: paisController.text,

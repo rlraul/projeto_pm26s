@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto/dao/ponto_turistico_dao.dart';
 import 'package:projeto/model/ponto_turistico.dart';
+import 'package:projeto/pages/filtro_pontos_turisticos_page.dart';
 import 'package:projeto/pages/ponto_turistico_form_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListaPontosTuristicos extends StatefulWidget {
   const ListaPontosTuristicos({super.key});
@@ -13,13 +15,15 @@ class ListaPontosTuristicos extends StatefulWidget {
 
 class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
 
-  //tatic const ACAO_EDITAR = 'editar';
-  //static const ACAO_EXCLUIR = 'excluir';
-
-  final pontosTuristicos = <PontoTutistico>[];
+  final _pontosTuristicos = <PontoTutistico>[];
   final _dao = PontoTuristicoDao();
+  var _carregando = false;
 
-  int _ultimoId = 0;
+  @override
+  void initState(){
+    super.initState();
+    _atualizarLista();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +43,30 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
       title: Text('Lista de Pontos Turísticos'),
       actions: [
         IconButton(
-            onPressed: null,
+            onPressed: _abrirPaginaFiltro,
             icon: Icon(Icons.filter_list)),
       ],
     );
   }
 
+  void _abrirPaginaFiltro(){
+    final navigator = Navigator.of(context);
+    navigator.pushNamed(FiltroPontosTuristicosPage.routeName).then((alterouValores) {
+      if(alterouValores == true){
+        ////
+      }
+    });
+  }
+
   Widget _criarBody() {
-    if (pontosTuristicos.isEmpty || pontosTuristicos == null) {
+    if (_pontosTuristicos.isEmpty || _pontosTuristicos == null) {
       return const Center(
         child: Text('Nenhum ponto turístico cadastrado!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       );
     }
     return ListView.separated(
         itemBuilder: (BuildContext context, int index) {
-          final pontoTuristico = pontosTuristicos[index];
+          final pontoTuristico = _pontosTuristicos[index];
           return Card(
             child: Column (
               mainAxisSize: MainAxisSize.min,
@@ -85,7 +98,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
           );
         },
         separatorBuilder: (BuildContext context, int index) => Divider(),
-        itemCount: pontosTuristicos.length
+        itemCount: _pontosTuristicos.length
     );
   }
 
@@ -142,7 +155,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  pontosTuristicos.removeAt(indice);
+                  _pontosTuristicos.removeAt(indice);
                 });
               },
               child: Text('OK')
@@ -178,16 +191,46 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
               }
               Navigator.of(context).pop();
               final novoPontoTuristico = key.currentState!.novoPontoTuristico;
+              novoPontoTuristico.data_inclusao = DateTime.now();
               _dao.salvar(novoPontoTuristico).then((success) {
                 if (success) {
-                  //_atualizarLista();
+                  _atualizarLista();
                 }
               });
-              //_atualizarLista();
+              _atualizarLista();
             },
           ),
         ],
       ),
     );
+  }
+
+  void _atualizarLista() async {
+    setState(() {
+      _carregando = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final campoOrdenacao =
+        prefs.getString(FiltroPontosTuristicosPage.chaveCampoOrdenacao) ?? PontoTutistico.CAMPO_ID;
+    final usarOrdemDecrescente =
+        prefs.getBool(FiltroPontosTuristicosPage.chaveUsarOrdemDecrescente) == true;
+    final filtroDescricao =
+        prefs.getString(FiltroPontosTuristicosPage.chaveFiltroCampo) ?? '';
+    final tarefas = await _dao.listar(
+      filtro: filtroDescricao,
+      campoOrdenacao: campoOrdenacao,
+      usarOrdemDecrescente: usarOrdemDecrescente,
+    );
+    setState(() {
+      _pontosTuristicos.clear();
+      if (tarefas.isNotEmpty) {
+        _pontosTuristicos.addAll(tarefas);
+      }
+    });
+    setState(() {
+      _carregando = false;
+    });
   }
 }
