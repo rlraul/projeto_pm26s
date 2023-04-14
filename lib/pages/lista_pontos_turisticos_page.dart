@@ -102,35 +102,6 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
     );
   }
 
-  // List<PopupMenuEntry<String>> criarItensMenuPopup(){
-  //   return[
-  //     PopupMenuItem<String>(
-  //       value: ACAO_EDITAR,
-  //       child: Row(
-  //         children: [
-  //           Icon(Icons.edit, color: Colors.black),
-  //           Padding(
-  //             padding: EdgeInsets.only(left: 10),
-  //             child: Text('Editar'),
-  //           )
-  //         ],
-  //       )
-  //     ),
-  //     PopupMenuItem<String>(
-  //       value: ACAO_EXCLUIR,
-  //       child: Row(
-  //         children: [
-  //           Icon(Icons.delete, color: Colors.red),
-  //           Padding(
-  //             padding: EdgeInsets.only(left: 10),
-  //             child: Text('Excluir'),
-  //           )
-  //         ],
-  //       )
-  //     )
-  //   ];
-  // }
-
   void _excluir(int indice){
     showDialog(
       context: context,
