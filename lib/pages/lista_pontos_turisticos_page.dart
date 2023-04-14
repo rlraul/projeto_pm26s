@@ -193,7 +193,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
     final usarOrdemDecrescente =
         prefs.getBool(FiltroPontosTuristicosPage.chaveUsarOrdemDecrescente) == true;
     final filtroDescricao =
-        prefs.getString(FiltroPontosTuristicosPage.chaveFiltroDescricao) ?? '';
+        prefs.getString(FiltroPontosTuristicosPage.chaveFiltroCampo) ?? '';
 
     final pontosTuristicos = await _dao.listar(
       filtro: filtroDescricao,

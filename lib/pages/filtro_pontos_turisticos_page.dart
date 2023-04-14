@@ -6,7 +6,8 @@ class FiltroPontosTuristicosPage extends StatefulWidget {
   static const routeName = '/filtro';
   static const chaveCampoOrdenacao = 'campoOrdenacao';
   static const chaveUsarOrdemDecrescente = 'usarOrdemDecrescente';
-  static const chaveFiltroDescricao = 'filtroDescricao';
+
+  static const chaveFiltroCampo = 'filtroCampo';
 
   @override
   _FiltroPageState createState() => _FiltroPageState();
@@ -15,8 +16,11 @@ class FiltroPontosTuristicosPage extends StatefulWidget {
 class _FiltroPageState extends State<FiltroPontosTuristicosPage> {
   final _camposParaOrdenacao = {
     PontoTutistico.CAMPO_ID: 'Código',
+    PontoTutistico.CAMPO_NOME: 'Nome',
     PontoTutistico.CAMPO_DESCRICAO: 'Descrição',
-    PontoTutistico.CAMPO_DATA_INC: 'Prazo'
+    PontoTutistico.CAMPO_CIDADE: 'Cidade',
+    PontoTutistico.CAMPO_PAIS: 'País',
+    PontoTutistico.CAMPO_DATA_INC: 'Data Inclusão'
   };
   late final SharedPreferences _prefs;
   final _descricaoController = TextEditingController();
@@ -37,8 +41,9 @@ class _FiltroPageState extends State<FiltroPontosTuristicosPage> {
           _prefs.getString(FiltroPontosTuristicosPage.chaveCampoOrdenacao) ?? PontoTutistico.CAMPO_ID;
       _usarOrdemDecrescente =
           _prefs.getBool(FiltroPontosTuristicosPage.chaveUsarOrdemDecrescente) == true;
+
       _descricaoController.text =
-          _prefs.getString(FiltroPontosTuristicosPage.chaveFiltroDescricao) ?? '';
+          _prefs.getString(FiltroPontosTuristicosPage.chaveFiltroCampo) ?? '';
     });
   }
 
@@ -87,10 +92,10 @@ class _FiltroPageState extends State<FiltroPontosTuristicosPage> {
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: TextField(
           decoration: InputDecoration(
-            labelText: 'Descrição começa com',
+            labelText: 'Valor começa com',
           ),
           controller: _descricaoController,
-          onChanged: _onFiltroDescricaoChanged,
+          onChanged: _onFiltroCampoChanged,
         ),
       ),
     ],
@@ -112,8 +117,8 @@ class _FiltroPageState extends State<FiltroPontosTuristicosPage> {
     });
   }
 
-  void _onFiltroDescricaoChanged(String? valor) {
-    _prefs.setString(FiltroPontosTuristicosPage.chaveFiltroDescricao, valor ?? '');
+  void _onFiltroCampoChanged(String? valor) {
+    _prefs.setString(FiltroPontosTuristicosPage.chaveFiltroCampo, valor ?? '');
     _alterouValores = true;
   }
 
