@@ -24,7 +24,7 @@ class PontoTutistico {
       required this.cidade,
       required this.pais,
       required this.descricao,
-      required this.data_inclusao
+      required this.data_inclusao,
   });
 
   String get retornarDataInclusaoFormatada {

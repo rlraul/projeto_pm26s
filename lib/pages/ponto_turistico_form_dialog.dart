@@ -1,7 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:projeto/pages/internal_map_page.dart';
 import '../model/ponto_turistico.dart';
 
 class PontoTuristicoDialog extends StatefulWidget{
@@ -24,6 +28,7 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   final _dateFormat = DateFormat('dd/MM/yyy');
 
   Position? _localizacaoAtual;
+  LatLng? _posicaoEscolhida;
 
   @override
   void initState(){
@@ -89,7 +94,7 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
               child: Text('Abrir local no Google Maps')
           ),
           ElevatedButton(
-              onPressed: () {},
+              onPressed: _abrirMapaInterno,
               child: Text('Abrir local no aplicativo')
           ),
         ],
@@ -112,11 +117,22 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
 
   void _abrirMapaExterno() async{
     bool obteveLocalizacaoAtual = await _obterLocalizacaoAtual();
-
     if (obteveLocalizacaoAtual) {
-      MapsLauncher.launchCoordinates(
-          _localizacaoAtual!.latitude, _localizacaoAtual!.longitude);
+      MapsLauncher.launchCoordinates(_localizacaoAtual!.latitude, _localizacaoAtual!.longitude);
     }
+  }
+
+  void _abrirMapaInterno() async{
+    bool obteveLocalizacaoAtual = await _obterLocalizacaoAtual();
+
+    if (obteveLocalizacaoAtual)
+      Navigator.push(context, MaterialPageRoute(
+        builder: (BuildContext context) => InternalMapPage(
+          latitude: _localizacaoAtual!.latitude,
+          longitude: _localizacaoAtual!.longitude,
+        ),
+      ),
+      );
   }
 
   Future<bool> _servicoHabilitado() async {
