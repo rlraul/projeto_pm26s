@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class Provider {
   static const _dbName = 'pontos-turisticos.db';
-  static const _dbVersion = 1;
+  static const _dbVersion = 2;
 
   Provider._init();
   static final Provider instance = Provider._init();
@@ -21,7 +21,7 @@ class Provider {
       dbPath,
       version: _dbVersion,
       onCreate: _onCreate,
-      //onUpgrade: _onUpgrade,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -40,22 +40,32 @@ class Provider {
     );
   }
 
-  // Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-  //   switch(oldVersion){
-  //     case 1:
-  //       {
-  //           await db.execute('''
-  //           ALTER TABLE ${PontoTutistico.NOME_TABELA}
-  //           ADD ${PontoTutistico.LATITUDE} REAL NOT NULL DEFAULT 0;
-  //           ''');
-  //
-  //           await db.execute('''
-  //           ALTER TABLE ${PontoTutistico.NOME_TABELA}
-  //           ADD ${PontoTutistico.LONGITUDE} REAL NOT NULL DEFAULT 0;
-  //           ''');
-  //       }
-  //   }
-  // }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    switch(oldVersion){
+      case 1:
+        {
+            await db.execute('''
+            ALTER TABLE ${PontoTutistico.NOME_TABELA}
+            ADD ${PontoTutistico.CAMPO_CEP} TEXT NOT NULL DEFAULT '';
+            ''');
+
+            await db.execute('''
+            ALTER TABLE ${PontoTutistico.NOME_TABELA}
+            ADD ${PontoTutistico.CAMPO_UF} TEXT NOT NULL DEFAULT '';
+            ''');
+
+            await db.execute('''
+            ALTER TABLE ${PontoTutistico.NOME_TABELA}
+            ADD ${PontoTutistico.CAMPO_BAIRRO} TEXT NOT NULL DEFAULT '';
+            ''');
+
+            await db.execute('''
+            ALTER TABLE ${PontoTutistico.NOME_TABELA}
+            ADD ${PontoTutistico.CAMPO_LOGRADOURO} TEXT NOT NULL DEFAULT '';
+            ''');
+        }
+    }
+  }
 
   Future<void> close() async {
     if (_database != null) {

@@ -148,7 +148,7 @@ class _ListaPontosTuristicosState extends State<ListaPontosTuristicos> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(
-          pontoTutistico == null ? 'Nova Tarefa' : 'Alterar Tarefa ${pontoTutistico.id}',
+          pontoTutistico == null ? 'Novo Ponto Turístico' : 'Alterar Ponto Turístico ${pontoTutistico.id}',
         ),
         content: PontoTuristicoDialog(
           key: key,

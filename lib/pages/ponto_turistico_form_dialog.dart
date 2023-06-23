@@ -22,6 +22,10 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   final formKey = GlobalKey<FormState>();
   final nomeController = TextEditingController();
   final cidadeController = TextEditingController();
+  final cepController = TextEditingController();
+  final ufController = TextEditingController();
+  final bairroController = TextEditingController();
+  final logradouroController = TextEditingController();
   final paisController = TextEditingController();
   final descricaoController = TextEditingController();
   final dtInclusaoController = TextEditingController();
@@ -35,10 +39,14 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
     super.initState();
     if ( widget.pontoTuristicoAtual != null){
       nomeController.text = widget.pontoTuristicoAtual!.nome;
-      cidadeController.text = widget.pontoTuristicoAtual!.cidade;
-      paisController.text = widget.pontoTuristicoAtual!.pais;
       descricaoController.text = widget.pontoTuristicoAtual!.descricao;
       dtInclusaoController.text = widget.pontoTuristicoAtual!.retornarDataInclusaoFormatada;
+      cepController.text = widget.pontoTuristicoAtual!.cep;
+      paisController.text = widget.pontoTuristicoAtual!.pais;
+      ufController.text = widget.pontoTuristicoAtual!.uf;
+      cidadeController.text = widget.pontoTuristicoAtual!.cidade;
+      bairroController.text = widget.pontoTuristicoAtual!.bairro;
+      logradouroController.text = widget.pontoTuristicoAtual!.logradouro;
     }
   }
 
@@ -70,11 +78,11 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
             },
           ),
           TextFormField(
-            controller: this.cidadeController,
-            decoration: InputDecoration(labelText: 'Cidade do ponto turístico'),
-            validator: (String? cidade) {
-              if (cidade == null || cidade.isEmpty) {
-                return 'Campo "Cidade" obrigatório';
+            controller: this.cepController,
+            decoration: InputDecoration(labelText: 'CEP do ponto turístico'),
+            validator: (String? cep) {
+              if (cep == null || cep.isEmpty) {
+                return 'Campo "CEP" obrigatório';
               }
               return null;
             },
@@ -85,6 +93,49 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
             validator: (String? pais) {
               if (pais == null || pais.isEmpty) {
                 return 'Campo "País" obrigatório';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: this.ufController,
+            decoration: InputDecoration(labelText: 'UF do ponto turístico'),
+            validator: (String? uf) {
+              if (uf == null || uf.isEmpty) {
+                return 'Campo "UF" obrigatório';
+              }
+              if (uf.length != 2) {
+                return 'Campo "UF" deve conter 2 caracteres';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: this.cidadeController,
+            decoration: InputDecoration(labelText: 'Cidade do ponto turístico'),
+            validator: (String? cidade) {
+              if (cidade == null || cidade.isEmpty) {
+                return 'Campo "Cidade" obrigatório';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: this.bairroController,
+            decoration: InputDecoration(labelText: 'Bairro do ponto turístico'),
+            validator: (String? bairro) {
+              if (bairro == null || bairro.isEmpty) {
+                return 'Campo "Bairro" obrigatório';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: this.logradouroController,
+            decoration: InputDecoration(labelText: 'Logradouro do ponto turístico'),
+            validator: (String? logradouro) {
+              if (logradouro == null || logradouro.isEmpty) {
+                return 'Campo "Logradouro" obrigatório';
               }
               return null;
             },
@@ -187,10 +238,14 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   PontoTutistico get novoPontoTuristico => PontoTutistico(
     id: widget.pontoTuristicoAtual?.id,
     nome: nomeController.text,
-    cidade: cidadeController.text,
-    pais: paisController.text,
     descricao: descricaoController.text,
     data_inclusao: dtInclusaoController.text.isEmpty ? null : _dateFormat.parse(dtInclusaoController.text),
+    cep: cepController.text,
+    pais: paisController.text,
+    uf: ufController.text,
+    cidade: cidadeController.text,
+    bairro: bairroController.text,
+    logradouro: logradouroController.text,
   );
 
 }
