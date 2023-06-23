@@ -5,7 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:projeto/model/cep.dart';
 import 'package:projeto/pages/internal_map_page.dart';
+import 'package:projeto/service/cep_service.dart';
 import '../model/ponto_turistico.dart';
 
 class PontoTuristicoDialog extends StatefulWidget{
@@ -30,6 +33,15 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   final descricaoController = TextEditingController();
   final dtInclusaoController = TextEditingController();
   final _dateFormat = DateFormat('dd/MM/yyy');
+
+  Cep? _cep;
+  final _service = CepService();
+  final _formKey = GlobalKey<FormState>();
+  var _loading = false;
+  final _cepFormater = MaskTextInputFormatter(
+      mask: '#####-###',
+      filter: {'#' : RegExp(r'[0-9]')}
+  );
 
   Position? _localizacaoAtual;
   LatLng? _posicaoEscolhida;
@@ -79,13 +91,26 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
           ),
           TextFormField(
             controller: this.cepController,
-            decoration: InputDecoration(labelText: 'CEP do ponto turístico'),
+            decoration: InputDecoration(
+              labelText: 'CEP do ponto turístico',
+              suffixIcon: _loading ? const Padding(
+                padding: EdgeInsets.all(10),
+                child: CircularProgressIndicator(strokeWidth: 2,),
+              ) : IconButton(
+                  onPressed: _findCep,
+                  icon: const Icon(Icons.search)
+              ),
+            ),
             validator: (String? cep) {
               if (cep == null || cep.isEmpty) {
                 return 'Campo "CEP" obrigatório';
               }
+              if (cep == null || cep.isEmpty || !_cepFormater.isFill()) {
+                return 'Informe um CEP válido!';
+              }
               return null;
             },
+            inputFormatters: [_cepFormater],
           ),
           TextFormField(
             controller: this.paisController,
@@ -151,6 +176,32 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
         ],
       ),
     );
+  }
+
+  Future<void> _findCep() async {
+    setState(() {
+      _loading = true;
+    });
+    try{
+      _cep = await _service.findCepAsObject(_cepFormater.getUnmaskedText());
+      _AlimentaCamposEndereco(_cep);
+    } catch(e) {
+      debugPrint(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Erro ao consultar CEP. O erro foi: ${e.toString()}')
+      ));
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  void _AlimentaCamposEndereco(Cep? cep) {
+    cepController.text = cep!.cep.toString();
+    ufController.text = cep!.uf.toString();
+    cidadeController.text = cep!.localidade.toString();
+    bairroController.text = cep!.bairro.toString();
+    logradouroController.text = cep!.logradouro.toString();
   }
 
   Future<bool> _obterLocalizacaoAtual() async{
