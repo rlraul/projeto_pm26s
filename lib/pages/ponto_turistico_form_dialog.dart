@@ -32,6 +32,8 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
   final paisController = TextEditingController();
   final descricaoController = TextEditingController();
   final dtInclusaoController = TextEditingController();
+  final latitudeController = TextEditingController();
+  final longitudeController = TextEditingController();
   final _dateFormat = DateFormat('dd/MM/yyy');
 
   Cep? _cep;
@@ -64,116 +66,125 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: this.nomeController,
-            decoration: InputDecoration(labelText: 'Nome do ponto turístico'),
-            validator: (String? nome) {
-              if (nome == null || nome.isEmpty) {
-                return 'Campo "Nome" obrigatório';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.descricaoController,
-            decoration: InputDecoration(labelText: 'Descrição do ponto turístico'),
-            validator: (String? descricao) {
-              if (descricao == null || descricao.isEmpty) {
-                return 'Campo "Descrição" obrigatório';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.cepController,
-            decoration: InputDecoration(
-              labelText: 'CEP do ponto turístico',
-              suffixIcon: _loading ? const Padding(
-                padding: EdgeInsets.all(10),
-                child: CircularProgressIndicator(strokeWidth: 2,),
-              ) : IconButton(
-                  onPressed: _findCep,
-                  icon: const Icon(Icons.search)
+    return SingleChildScrollView(
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: this.nomeController,
+              decoration: InputDecoration(labelText: 'Nome do ponto turístico'),
+              validator: (String? nome) {
+                if (nome == null || nome.isEmpty) {
+                  return 'Campo "Nome" obrigatório';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.descricaoController,
+              decoration: InputDecoration(labelText: 'Descrição do ponto turístico'),
+              validator: (String? descricao) {
+                if (descricao == null || descricao.isEmpty) {
+                  return 'Campo "Descrição" obrigatório';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.cepController,
+              decoration: InputDecoration(
+                labelText: 'CEP do ponto turístico',
+                suffixIcon: _loading ? const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: CircularProgressIndicator(strokeWidth: 2,),
+                ) : IconButton(
+                    onPressed: _findCep,
+                    icon: const Icon(Icons.search)
+                ),
+              ),
+              validator: (String? cep) {
+                if (cep == null || cep.isEmpty) {
+                  return 'Campo "CEP" obrigatório';
+                }
+                if (cep == null || cep.isEmpty || !_cepFormater.isFill()) {
+                  return 'Informe um CEP válido!';
+                }
+                return null;
+              },
+              inputFormatters: [_cepFormater],
+            ),
+            TextFormField(
+              controller: this.paisController,
+              decoration: InputDecoration(labelText: 'País do ponto turístico'),
+              validator: (String? pais) {
+                if (pais == null || pais.isEmpty) {
+                  return 'Campo "País" obrigatório';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.ufController,
+              decoration: InputDecoration(labelText: 'UF do ponto turístico'),
+              validator: (String? uf) {
+                if (uf == null || uf.isEmpty) {
+                  return 'Campo "UF" obrigatório';
+                }
+                if (uf.length != 2) {
+                  return 'Campo "UF" deve conter 2 caracteres';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.cidadeController,
+              decoration: InputDecoration(labelText: 'Cidade do ponto turístico'),
+              validator: (String? cidade) {
+                if (cidade == null || cidade.isEmpty) {
+                  return 'Campo "Cidade" obrigatório';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.bairroController,
+              decoration: InputDecoration(labelText: 'Bairro do ponto turístico'),
+              validator: (String? bairro) {
+                if (bairro == null || bairro.isEmpty) {
+                  return 'Campo "Bairro" obrigatório';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: this.logradouroController,
+              decoration: InputDecoration(labelText: 'Logradouro do ponto turístico'),
+              validator: (String? logradouro) {
+                if (logradouro == null || logradouro.isEmpty) {
+                  return 'Campo "Logradouro" obrigatório';
+                }
+                return null;
+              },
+            ),
+            Flexible(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: _abrirMapaExterno,
+                    child: Text('Google Maps'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _abrirMapaInterno,
+                    child: Text('Mapa Interno'),
+                  ),
+                ],
               ),
             ),
-            validator: (String? cep) {
-              if (cep == null || cep.isEmpty) {
-                return 'Campo "CEP" obrigatório';
-              }
-              if (cep == null || cep.isEmpty || !_cepFormater.isFill()) {
-                return 'Informe um CEP válido!';
-              }
-              return null;
-            },
-            inputFormatters: [_cepFormater],
-          ),
-          TextFormField(
-            controller: this.paisController,
-            decoration: InputDecoration(labelText: 'País do ponto turístico'),
-            validator: (String? pais) {
-              if (pais == null || pais.isEmpty) {
-                return 'Campo "País" obrigatório';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.ufController,
-            decoration: InputDecoration(labelText: 'UF do ponto turístico'),
-            validator: (String? uf) {
-              if (uf == null || uf.isEmpty) {
-                return 'Campo "UF" obrigatório';
-              }
-              if (uf.length != 2) {
-                return 'Campo "UF" deve conter 2 caracteres';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.cidadeController,
-            decoration: InputDecoration(labelText: 'Cidade do ponto turístico'),
-            validator: (String? cidade) {
-              if (cidade == null || cidade.isEmpty) {
-                return 'Campo "Cidade" obrigatório';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.bairroController,
-            decoration: InputDecoration(labelText: 'Bairro do ponto turístico'),
-            validator: (String? bairro) {
-              if (bairro == null || bairro.isEmpty) {
-                return 'Campo "Bairro" obrigatório';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: this.logradouroController,
-            decoration: InputDecoration(labelText: 'Logradouro do ponto turístico'),
-            validator: (String? logradouro) {
-              if (logradouro == null || logradouro.isEmpty) {
-                return 'Campo "Logradouro" obrigatório';
-              }
-              return null;
-            },
-          ),
-          ElevatedButton(
-              onPressed: _abrirMapaExterno,
-              child: Text('Abrir local no Google Maps')
-          ),
-          ElevatedButton(
-              onPressed: _abrirMapaInterno,
-              child: Text('Abrir local no aplicativo')
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -297,6 +308,8 @@ class PontoTuristicoAtualState extends State<PontoTuristicoDialog>{
     cidade: cidadeController.text,
     bairro: bairroController.text,
     logradouro: logradouroController.text,
+    latitude: double.parse(latitudeController.text),
+    longitude: double.parse(longitudeController.text),
   );
 
 }
